@@ -1,0 +1,36 @@
+﻿@using System.Globalization;
+@model IEnumerable<Student>
+<h2>Students</h2>
+<table class="table">
+    <tr>
+        <th>Student ID</th>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Age</th>
+        <th>Course</th>
+        <th>Hobbies</th>
+        <th colspan="2">Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.FirstName</td>
+            <td>@item.LastName</td>
+            <td>
+                @{
+                    DateTime dateTime = DateTime.ParseExact(item.DOB, "yyyy/MM/dd", CultureInfo.InvariantCulture);
+                    var age = DateTime.UtcNow.Year - dateTime.Year;
+
+                    @Html.DisplayTextFor(model =>age);
+                }
+            </td>
+            <td>@item.course.Name</td>
+            <td></td>
+
+            <td><a asp-controller="Student" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-dark">Edit</a></td>
+            <td><a asp-controller="Student" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-dark">Delete</a></td>
+        </tr>
+    }
+</table>

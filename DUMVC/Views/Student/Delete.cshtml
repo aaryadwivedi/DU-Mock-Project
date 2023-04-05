@@ -1,0 +1,14 @@
+﻿@model Student
+<h2>Are you sure you want to delete the following?</h2>
+<form method="post" asp-action="DeleteStudent" asp-route-id="@Model.Id">
+    <div class="form-group">
+        <label for="Id">Student Id:</label>
+        <input type="text" class="form-control" asp-for="@Model.Id" disabled>
+    </div>
+    <div class="form-group">
+        <label for="Name">First Name:</label>
+        <input type="text" class="form-control" asp-for="@Model.FirstName" disabled>
+    </div>
+
+    <button type="submit" class="btn btn-dark">Delete</button>
+</form>

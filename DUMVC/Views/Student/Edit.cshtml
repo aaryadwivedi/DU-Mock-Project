@@ -1,0 +1,26 @@
+﻿@model Student
+
+<h2>Edit User </h2>
+<form method="post">
+
+    <div class="form-group">
+        <label for="FirstName">First Name:</label>
+        <input type="text" class="form-control" asp-for="@Model.FirstName">
+        <span asp-validation-for="@Model.FirstName" style="color:red"></span>
+    </div>
+    <div class="form-group">
+        <label for="LastName">Last Name:</label>
+        <input type="text" class="form-control" asp-for="@Model.LastName">
+        <span asp-validation-for="@Model.LastName" style="color:red"></span>
+    </div>
+    <div class="form-group">
+        <label for="DOB">DOB:</label>
+        <input type="date" class="form-control" asp-for="@Model.DOB">
+        <span asp-validation-for="@Model.DOB" style="color:red"></span>
+    </div>
+    <div class="form-group">
+        <label>Course:</label>
+        <select asp-for="@Model.Course_Id" asp-items="@ViewBag.list" class="form-select"></select>
+    </div>
+    <button type="submit" class="btn btn-dark">Update</button>
+</form>
