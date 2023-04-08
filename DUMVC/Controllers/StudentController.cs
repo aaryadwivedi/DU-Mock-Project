@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json.Linq;
+using DUMVC.DTO;
 
 namespace DUMVC.Controllers
 {
@@ -21,13 +22,13 @@ namespace DUMVC.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStudents()
         {
-            List<Student>? std = new List<Student>();
+            List<StudentFull>? std = new List<StudentFull>();
             using (var client = new HttpClient())
             {
                 using (var response = await client.GetAsync(this.baseUrl + "api/Student/getStudents"))
                 {
                     string apiresponse = await response.Content.ReadAsStringAsync();
-                    std = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Student>>(apiresponse);
+                    std = Newtonsoft.Json.JsonConvert.DeserializeObject<List<StudentFull>>(apiresponse);
                 }
             }
             if (std != null)
@@ -54,14 +55,27 @@ namespace DUMVC.Controllers
 
                         list.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
                     }
-                    ViewBag.list = list;
+                    ViewBag.Courses = list;
+                    using (var res = await client.GetAsync(this.baseUrl + "api/hobby/gethobbies"))
+                    {
+                        string apires = await res.Content.ReadAsStringAsync();
+                        var hob = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Hobby>>(apires);
+                        List<SelectListItem> list1 = new List<SelectListItem>();
+                        foreach (var item in hob)
+                        {
+
+                            list1.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
+                        }
+                        ViewBag.Hobbies = list1;
+                        return View();
+                    }
                     return View();
                 }
             }
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> AddStudent(Student student)
+        public async Task<IActionResult> AddStudent(StudentViewMod student)
         {
             Student? std = new Student();
             using (var client = new HttpClient())
@@ -84,13 +98,14 @@ namespace DUMVC.Controllers
                 return View();
             }
         }
+        
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
             var getDelStu = new Student();
             using (var client = new HttpClient())
             {
-                using (var response = await client.GetAsync(this.baseUrl + "api/Student/getStudentById/" + id))
+                using (var response = await client.GetAsync(this.baseUrl + "api/Student/getStudentId/" + id))
                 {
                     string apiresponse = await response.Content.ReadAsStringAsync();
                     getDelStu = Newtonsoft.Json.JsonConvert.DeserializeObject<Student>(apiresponse);
@@ -119,13 +134,13 @@ namespace DUMVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            Student getEditStu = new Student();
+            StudentViewMod getEditStu = new StudentViewMod();
             using (var client = new HttpClient())
             {
                 using (var response = await client.GetAsync(this.baseUrl + "api/course/getcourses"))
                 {
                     string apiresponse = await response.Content.ReadAsStringAsync();
-                    var cour  = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Course>>(apiresponse);
+                    var cour = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Course>>(apiresponse);
                     List<SelectListItem> list = new List<SelectListItem>();
                     foreach (var item in cour)
                     {
@@ -133,25 +148,37 @@ namespace DUMVC.Controllers
                         list.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
                     }
                     ViewBag.list = list;
+                    using (var res = await client.GetAsync(this.baseUrl + "api/hobby/gethobbies"))
+                    {
+                        string apires = await res.Content.ReadAsStringAsync();
+                        var hob = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Hobby>>(apires);
+                        List<SelectListItem> list1 = new List<SelectListItem>();
+                        foreach (var item in hob)
+                        {
+
+                            list1.Add(new SelectListItem { Text = item.Name, Value = item.Id.ToString() });
+                        }
+                        ViewBag.Hobbies = list1;
+                    }
                 }
                 using (var response = await client.GetAsync(this.baseUrl + "api/student/getstudentbyid/" + id))
                 {
                     string apiresponse = await response.Content.ReadAsStringAsync();
-                    getEditStu = Newtonsoft.Json.JsonConvert.DeserializeObject<Student>(apiresponse);
+                    getEditStu = Newtonsoft.Json.JsonConvert.DeserializeObject<StudentViewMod>(apiresponse);
                 }
             }
 
             if (getEditStu != null)
             {
-                getEditStu.DOB = getEditStu.DOB.Replace("/", "-");
-                return View(getEditStu);
+                getEditStu.studentDTO.DOB = getEditStu.studentDTO.DOB.Replace("/", "-");
+                return View(getEditStu); 
             }
             return View(new Student());
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(Student student)
+        public async Task<IActionResult> Edit(StudentViewMod stud)
         {
-            if (student.FirstName == null || student.LastName == null || student.DOB == null)
+            if (stud.studentDTO.FirstName == null || stud.studentDTO.LastName == null || stud.studentDTO.DOB == null)
             {
                 return View();
             }
@@ -159,7 +186,7 @@ namespace DUMVC.Controllers
            
             using (var client = new HttpClient())
             {
-                StringContent content = new StringContent(JsonConvert.SerializeObject(student),
+                StringContent content = new StringContent(JsonConvert.SerializeObject(stud),
                 Encoding.UTF8, "application/json");
                 using (var response = await client.PutAsync(this.baseUrl + "api/student/EditStudent/", content))
                 {
@@ -167,9 +194,9 @@ namespace DUMVC.Controllers
                     UpdateStd = Newtonsoft.Json.JsonConvert.DeserializeObject<Student>(apiresponse);
                 }
             }
-            if (UpdateStd != null)
+            if (UpdateStd != null && UpdateStd.FirstName!=null)
             {
-                TempData["message"] = $"BookDetails {UpdateStd.FirstName} updated successfully";
+                TempData["message"] = $"Details {UpdateStd.FirstName} updated successfully";
                 return RedirectToAction("getStudents");
             }
             else

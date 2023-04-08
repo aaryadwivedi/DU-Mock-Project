@@ -16,6 +16,7 @@ builder.Services.AddDbContext<ADBContext>(options =>
 });
 builder.Services.AddScoped<iStudentRepository, StudentDBRepository>();
 builder.Services.AddScoped<iCourseRepository, CourseDBRepository>();
+builder.Services.AddScoped<iHobbyRepository, HobbyDBRepository>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 var app = builder.Build();
 

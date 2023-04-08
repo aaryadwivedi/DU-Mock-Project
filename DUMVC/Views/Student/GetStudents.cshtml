@@ -1,5 +1,6 @@
 ﻿@using System.Globalization;
-@model IEnumerable<Student>
+@using DUMVC.DTO;
+@model IEnumerable<StudentFull>
 <h2>Students</h2>
 <table class="table">
     <tr>
@@ -15,22 +16,29 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>@item.Id</td>
-            <td>@item.FirstName</td>
-            <td>@item.LastName</td>
+            <td>@item.student.Id</td>
+            <td>@item.student.FirstName</td>
+            <td>@item.student.LastName</td>
             <td>
                 @{
-                    DateTime dateTime = DateTime.ParseExact(item.DOB, "yyyy/MM/dd", CultureInfo.InvariantCulture);
+                    DateTime dateTime = DateTime.ParseExact(item.student.DOB, "yyyy/MM/dd", CultureInfo.InvariantCulture);
                     var age = DateTime.UtcNow.Year - dateTime.Year;
 
                     @Html.DisplayTextFor(model =>age);
                 }
             </td>
-            <td>@item.course.Name</td>
-            <td></td>
+            <td>@item.student.course.Name</td>
+            <td>
+                <ul>
+                @foreach(var i in item.hobby)
+                {
+                        <li>@i.Name</li>
+                }
+                </ul>
+            </td>
 
-            <td><a asp-controller="Student" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-dark">Edit</a></td>
-            <td><a asp-controller="Student" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-dark">Delete</a></td>
+            <td><a asp-controller="Student" asp-action="Edit" asp-route-id="@item.student.Id" class="btn btn-sm btn-dark">Edit</a></td>
+            <td><a asp-controller="Student" asp-action="Delete" asp-route-id="@item.student.Id" class="btn btn-sm btn-dark">Delete</a></td>
         </tr>
     }
 </table>

@@ -16,6 +16,6 @@ namespace DU.Model
         [Required]
         public int Course_Id { get; set;}
         [ForeignKey("Course_Id")]
-        public Course course { get; set; }
+        public Course? course { get; set; }
     }
 }

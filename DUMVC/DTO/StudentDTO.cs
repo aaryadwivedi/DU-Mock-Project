@@ -1,8 +1,4 @@
-﻿using DU.Model;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace DU.DTO
+﻿namespace DUMVC.DTO
 {
     public class StudentDTO
     {
@@ -11,9 +7,5 @@ namespace DU.DTO
         public string LastName { get; set; }
         public string DOB { get; set; }
         public int Course_Id { get; set; }
-
-        //public int[] hobbies { get; set; }
-
-
     }
 }
